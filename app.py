@@ -45,7 +45,6 @@ import streamlit as st
 
 st.set_page_config(
     page_title="Hospital de Equinos · FES Cuautitlán | UNAM",
-    page_icon="🐎",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -1063,7 +1062,7 @@ def mapa_boxes(activos, nombres=True):
         urg = r["d"].get("tipo_ingreso") == "Urgencia"
         tip = f'{b} · {nom} · {r["d"].get("estado", "")}' if nombres else f"{b} · ocupado"
         tiles.append(f'<div class="bx {"urg" if urg else "occ"}" title="{h(tip)}"><div class="n">{h(b)}</div>'
-                     f'<div class="who">{h(nom)}</div><div class="st">{h(r["d"].get("estado", ""))}</div><span class="hs">🐎</span></div>')
+                     f'<div class="who">{h(nom)}</div><div class="st">{h(r["d"].get("estado", ""))}</div></div>')
     st.markdown('<div class="boxes">' + "".join(tiles) + '</div>'
                 '<div class="leg"><span><i class="free"></i>Disponible</span><span><i class="occ"></i>Ocupado</span><span><i class="urg"></i>Urgencia</span></div>',
                 unsafe_allow_html=True)
@@ -1591,7 +1590,7 @@ def medidor(nombre, val, ref, rango, unidad):
 
 def pagina_herramientas():
     titulo("herramientas", "Apoyos de consulta rápida. No sustituyen el criterio del médico veterinario.")
-    t = st.tabs(["⚖️ Peso con cinta", "🩺 Signos vitales"])
+    t = st.tabs(["Peso con cinta", "Signos vitales"])
     with t[0]:
         st.caption("Estimación aproximada: perímetro torácico² × longitud corporal ÷ 11,880 (en cm). Confirme con báscula cuando sea posible, sobre todo para dosificar.")
         a, b = st.columns(2)

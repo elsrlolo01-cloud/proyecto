@@ -1,10 +1,10 @@
 {
-  "sotokevin424@gmial.com": {
-    "nombre": "fernando urbina",
+  "sotokevin424@gmail.com": {
+    "nombre": "Fernando Urbina",
     "rol": "Administrador del sistema",
-    "salt": "6f584022390e735db9302c060541d9f0",
-    "hash": "e3c7acaafb6c1a3eb3f472e102b59a18ff341afe64d25f5d8cd78af576c8afaf",
+    "salt": "1db7e0d06696150710447697941ff9b3",
+    "hash": "0a8109b1a504810d35bea0531d89f10a9b26e3cb5ed1e5ca4e635c7d351a3d05",
     "activo": true,
-    "creado": "2026-11-09T11:51:56"
+    "creado": "2026-11-09T12:16:47"
   }
 }

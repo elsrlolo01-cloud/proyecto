@@ -66,7 +66,7 @@ def h(x) -> str:
 
 
 # ───────────────────────────── Identidad visual ────────────────────────────────
-AZUL, AZUL2, DORADO, TEAL, GRIS = "#0A1F44", "#14407F", "#C9A24B", "#2F7F70", "#F2F4F8"
+AZUL, AZUL2, DORADO, TEAL, GRIS = "#0A1F44", "#14407F", "#C9A24B", "#2F7F70", "#35F5FC"
 
 HOSPITAL_SEDE = "FES Cuautitlán | UNAM"
 BASE_DIR = Path(__file__).resolve().parent
@@ -896,7 +896,7 @@ def detalle(col, rec):
     if rec["files"]:
         st.markdown("**Archivos**")
         for i, fl in enumerate(rec["files"]):
-            st.download_button(f"⬇️ {fl['nombre']}", fl["bytes"], file_name=fl["nombre"], key=f"dl_{rec['folio']}_{i}")
+            st.download_button(f" {fl['nombre']}", fl["bytes"], file_name=fl["nombre"], key=f"dl_{rec['folio']}_{i}")
         imgs = [fl for fl in rec["files"] if fl["nombre"].lower().endswith((".png", ".jpg", ".jpeg"))]
         if imgs:
             cols = st.columns(min(3, len(imgs)))
@@ -935,7 +935,7 @@ def pagina_col(col, extras_nuevo=None):
     spec, ss = COL[col], st.session_state
     esc, val = puede_esc(col), puede_val(col)
     nombres = []
-    if esc: nombres.append("➕ Nuevo")
+    if esc: nombres.append(" Nuevo")
     nombres.append("Registros")
     if esc: nombres.append(" Actualizar")
     if val and spec["valida"]: nombres.append("Validación")
@@ -997,7 +997,7 @@ def pagina_col(col, extras_nuevo=None):
                 st.markdown("**Editar información**")
                 formulario(col, "editar", rec)
 
-    if "✅ Validación" in tabs:
+    if " Validación" in tabs:
         with tabs[" Validación"]:
             pend = [r for r in recs if r["val"] in (VAL_PEND, VAL_ENM)]
             st.markdown("##### Pendientes de revisión")
@@ -1030,7 +1030,7 @@ def pagina_col(col, extras_nuevo=None):
             else:
                 st.caption("Sin registros validados.")
 
-    if "🛑 Cancelaciones" in tabs:
+    if "Cancelaciones" in tabs:
         with tabs[" Cancelaciones"]:
             st.info("Las cancelaciones se realizan desde **Actualizar → Nuevo estado = Cancelado**, con motivo, y quedan en la bitácora.")
 
@@ -1096,7 +1096,7 @@ def pagina_inicio():
             p = Repo.buscar("pac", r["d"]["paciente"])
             pr = Repo.buscar("prop", p["d"].get("propietario", "")) if p else None
             mins = int((datetime.now() - datetime.fromisoformat(r["ts"])).total_seconds() / 60)
-            st.markdown(f'<div class="card"><h4>🐎 {h(p["d"].get("nombre", "") if p else "")} <small style="color:#5E6A82">· {h(sel)}</small></h4>'
+            st.markdown(f'<div class="card"><h4> {h(p["d"].get("nombre", "") if p else "")} <small style="color:#5E6A82">· {h(sel)}</small></h4>'
                         f'<span class="pill p-est">{h(r["d"].get("estado", ""))}</span><span class="pill p-na">{h(r["d"].get("tipo_ingreso", ""))}</span>'
                         f'{h(r["d"].get("area", ""))} · {mins} min en el hospital · Médico: {h(r["d"].get("medico") or "—")}<br>'
                         f'<small>Propietario: {h(pr["d"]["nombre"] if pr else "—")} · {h(r["d"].get("motivo", ""))}</small></div>', unsafe_allow_html=True)
@@ -1177,7 +1177,7 @@ def pagina_expediente():
     st.markdown(f'<div class="card"><h4> {h(d.get("nombre"))} <small style="color:#6B6558">· {h(d.get("especie"))} · {h(d.get("raza", ""))}</small></h4>'
                 f'Sexo: {h(d.get("sexo") or "—")} · Edad: {h(d.get("edad") or "—")} · Peso inicial: {d.get("peso") or "—"} kg · Capa: {h(d.get("capa") or "—")} · Uso: {h(d.get("uso") or "—")}{dueno}<br>'
                 f'<small>Alergias: {h(d.get("alergias") or "—")}</small></div>', unsafe_allow_html=True)
-    t = st.tabs(["🕒 Línea de tiempo", "➕ Nuevo registro clínico"])
+    t = st.tabs([" Línea de tiempo", " Nuevo registro clínico"])
     with t[0]:
         orden = [("adm", ""), ("triage", ""), ("clin", ""), ("inter", ""), ("lab", ""), ("img", ""), ("cir", ""), ("farm_disp", "")]
         ev = []
@@ -1257,7 +1257,7 @@ def pagina_farmacia():
 
 def pagina_academico():
     titulo("academico", "Participación académica supervisada. El expediente académico es independiente del expediente clínico.")
-    t = st.tabs(["🎓 Participación", "Reportes anonimizados"])
+    t = st.tabs([" Participación", "Reportes anonimizados"])
     with t[0]: pagina_col("acad")
     with t[1]:
         recs = [r for r in visibles("acad")]
@@ -1291,7 +1291,7 @@ def _cuenta(prop_folio):
 
 def pagina_finanzas():
     titulo("finanzas", "Cuentas de propietarios, cargos, abonos y comprobantes internos. Los precios los define el hospital.")
-    t = st.tabs(["💼 Cuentas", "Cargos", "Abonos", " Tarifario"])
+    t = st.tabs([" Cuentas", "Cargos", "Abonos", " Tarifario"])
     with t[0]:
         props = Repo.listar("prop")
         if not props:

@@ -401,11 +401,11 @@ for _r in (R_MVZ, R_ESP, R_EST, R_PROF, R_JEFE):
     ROLES[_r]["ver"].append("herramientas")
 
 MODULOS = {
-    "inicio": ("🏠", "Panel principal"), "recepcion": ("🛎️", "Recepción y admisión"), "triage": ("🚑", "Triage veterinario"),
-    "pacientes": ("🐎", "Propietarios y pacientes"), "expediente": ("📁", "Expediente clínico"), "interconsultas": ("🔀", "Interconsultas"),
-    "laboratorio": ("🔬", "Laboratorio clínico"), "imagen": ("📷", "Imagenología"), "cirugia": ("🏥", "Cirugías y anestesia"),
-    "farmacia": ("💊", "Farmacia hospitalaria"), "academico": ("🎓", "Control académico"), "finanzas": ("🧾", "Administración financiera"),
-    "estadisticas": ("📊", "Estadísticas"), "herramientas": ("🧰", "Herramientas clínicas"), "admin": ("⚙️", "Administración del sistema"),
+    "inicio": ("", "Panel principal"), "recepcion": ("", "Recepción y admisión"), "triage": ("", "Triage veterinario"),
+    "pacientes": ("", "Propietarios y pacientes"), "expediente": ("", "Expediente clínico"), "interconsultas": ("", "Interconsultas"),
+    "laboratorio": ("", "Laboratorio clínico"), "imagen": ("", "Imagenología"), "cirugia": ("", "Cirugías y anestesia"),
+    "farmacia": ("", "Farmacia hospitalaria"), "academico": ("", "Control académico"), "finanzas": ("", "Administración financiera"),
+    "estadisticas": ("", "Estadísticas"), "herramientas": ("", "Herramientas clínicas"), "admin": ("", "Administración del sistema"),
 }
 
 
@@ -724,7 +724,7 @@ def campo(f, kp, dv=None):
             recs = [r for r in recs if f["flt"](r)]
         mapa = {r["folio"]: etiqueta(f["o"], r, anon=f.get("anon", False)) for r in recs}
         if not mapa:
-            st.caption(f"⚠️ {f['l']}: aún no hay registros disponibles.")
+            st.caption(f" {f['l']}: aún no hay registros disponibles.")
         if t == "refmulti":
             return st.multiselect(lab, list(mapa), default=[x for x in (dv or []) if x in mapa], key=key, format_func=lambda x: mapa.get(x, x))
         op = [""] + list(mapa)
@@ -788,10 +788,10 @@ def formulario(col, modo="nuevo", rec=None, defaults=None):
         return
     if modo == "nuevo":
         r = Repo.crear(col, vals, files, validado=auto)
-        ss.flash = f"✅ {spec['t']} registrado con folio {r['folio']}."
+        ss.flash = f" {spec['t']} registrado con folio {r['folio']}."
     else:
         Repo.modificar(col, rec, vals, files, enmienda=motivo.strip() if modo == "enmendar" else "")
-        ss.flash = f"✅ {spec['t']} {rec['folio']} actualizado y registrado en la bitácora."
+        ss.flash = f" {spec['t']} {rec['folio']} actualizado y registrado en la bitácora."
     ss.ver[col] += 1
     st.rerun()
 
@@ -866,7 +866,7 @@ def titulo(mod, sub=""):
 
 
 def vacio(msg):
-    st.markdown(f'<div class="empty">🐎<br>{h(msg)}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="empty"> <br>{h(msg)}</div>', unsafe_allow_html=True)
 
 
 def kpi(n, l, cls=""):
@@ -936,20 +936,20 @@ def pagina_col(col, extras_nuevo=None):
     esc, val = puede_esc(col), puede_val(col)
     nombres = []
     if esc: nombres.append("➕ Nuevo")
-    nombres.append("📋 Registros")
-    if esc: nombres.append("✏️ Actualizar")
-    if val and spec["valida"]: nombres.append("✅ Validación")
-    if val and not spec["valida"]: nombres.append("🛑 Cancelaciones")
+    nombres.append("Registros")
+    if esc: nombres.append(" Actualizar")
+    if val and spec["valida"]: nombres.append("Validación")
+    if val and not spec["valida"]: nombres.append(" Cancelaciones")
     tabs = dict(zip(nombres, st.tabs(nombres)))
     recs = visibles(col)
 
-    if "➕ Nuevo" in tabs:
-        with tabs["➕ Nuevo"]:
+    if " Nuevo" in tabs:
+        with tabs["Nuevo"]:
             if rol() == R_EST and spec["valida"]:
                 st.info("Como estudiante, sus registros quedan **pendientes de validación** por el médico responsable o supervisor.")
             formulario(col, "nuevo", defaults=extras_nuevo)
 
-    with tabs["📋 Registros"]:
+    with tabs["Registros"]:
         if not recs:
             vacio(f"Aún no hay {spec['t'].lower()}s registrados.")
         else:
@@ -968,8 +968,8 @@ def pagina_col(col, extras_nuevo=None):
             if fol:
                 detalle(col, Repo.buscar(col, fol))
 
-    if "✏️ Actualizar" in tabs:
-        with tabs["✏️ Actualizar"]:
+    if " Actualizar" in tabs:
+        with tabs["Actualizar"]:
             edit = [r for r in recs if r["val"] != VAL_OK and (rol() != R_EST or r["por"] == yo())]
             if not edit:
                 vacio("No hay registros editables. Los registros validados solo pueden enmendarse con evidencia por personal autorizado.")
@@ -992,13 +992,13 @@ def pagina_col(col, extras_nuevo=None):
                                     rec["fin"] = datetime.now().isoformat(timespec="seconds")
                                 Repo.hist(rec, "Cambio de estado", f"{cur} → {nuevo}. {mot}")
                                 ss.ver[col] += 1
-                                ss.flash = f"✅ Estado de {fol}: {nuevo}"
+                                ss.flash = f"Estado de {fol}: {nuevo}"
                                 st.rerun()
                 st.markdown("**Editar información**")
                 formulario(col, "editar", rec)
 
     if "✅ Validación" in tabs:
-        with tabs["✅ Validación"]:
+        with tabs[" Validación"]:
             pend = [r for r in recs if r["val"] in (VAL_PEND, VAL_ENM)]
             st.markdown("##### Pendientes de revisión")
             if not pend:
@@ -1009,12 +1009,12 @@ def pagina_col(col, extras_nuevo=None):
                 detalle(col, rec)
                 ok = st.checkbox("Confirmo que revisé el registro y lo autorizo con mi firma electrónica interna.", key=f"ck_{col}_{fol}")
                 c1, c2 = st.columns(2)
-                if c1.button("✅ Validar registro", key=f"vb_{col}_{fol}", type="primary", disabled=not ok, **STRETCH):
+                if c1.button("Validar registro", key=f"vb_{col}_{fol}", type="primary", disabled=not ok, **STRETCH):
                     Repo.validar(col, rec)
-                    ss.flash = f"✅ {fol} validado."
+                    ss.flash = f" {fol} validado."
                     st.rerun()
                 com = c2.text_input("Comentario para devolver", key=f"cm_{col}_{fol}")
-                if c2.button("↩️ Devolver para corrección", key=f"db_{col}_{fol}", **STRETCH):
+                if c2.button(" Devolver para corrección", key=f"db_{col}_{fol}", **STRETCH):
                     if not com.strip():
                         st.error("Escriba el comentario de corrección.")
                     else:
@@ -1031,7 +1031,7 @@ def pagina_col(col, extras_nuevo=None):
                 st.caption("Sin registros validados.")
 
     if "🛑 Cancelaciones" in tabs:
-        with tabs["🛑 Cancelaciones"]:
+        with tabs[" Cancelaciones"]:
             st.info("Las cancelaciones se realizan desde **Actualizar → Nuevo estado = Cancelado**, con motivo, y quedan en la bitácora.")
 
 
@@ -1130,7 +1130,7 @@ def pagina_inicio():
 
 def pagina_recepcion():
     titulo("recepcion", "Registro de llegada, panel de presentes y seguimiento de estados")
-    t = st.tabs(["🐴 Presentes", "Admisiones"])
+    t = st.tabs([" Presentes", "Admisiones"])
     with t[0]:
         adm = [r for r in Repo.listar("adm") if r["d"].get("estado") != "Finalizado"]
         if not adm:
@@ -1156,7 +1156,7 @@ def pagina_triage():
 
 def pagina_pacientes():
     titulo("pacientes", "Registro inicial de propietarios y pacientes")
-    t = st.tabs(["🐎 Pacientes", "👤 Propietarios"])
+    t = st.tabs([" Pacientes", "Propietarios"])
     with t[0]: pagina_col("pac")
     with t[1]: pagina_col("prop")
 
@@ -1174,12 +1174,12 @@ def pagina_expediente():
     d = p["d"]
     prop = Repo.buscar("prop", d.get("propietario", ""))
     dueno = "" if rol() == R_EST else f"<br>Propietario: {h(prop['d']['nombre'] if prop else '—')}"
-    st.markdown(f'<div class="card"><h4>🐎 {h(d.get("nombre"))} <small style="color:#6B6558">· {h(d.get("especie"))} · {h(d.get("raza", ""))}</small></h4>'
+    st.markdown(f'<div class="card"><h4> {h(d.get("nombre"))} <small style="color:#6B6558">· {h(d.get("especie"))} · {h(d.get("raza", ""))}</small></h4>'
                 f'Sexo: {h(d.get("sexo") or "—")} · Edad: {h(d.get("edad") or "—")} · Peso inicial: {d.get("peso") or "—"} kg · Capa: {h(d.get("capa") or "—")} · Uso: {h(d.get("uso") or "—")}{dueno}<br>'
                 f'<small>Alergias: {h(d.get("alergias") or "—")}</small></div>', unsafe_allow_html=True)
     t = st.tabs(["🕒 Línea de tiempo", "➕ Nuevo registro clínico"])
     with t[0]:
-        orden = [("adm", "🛎️"), ("triage", "🚑"), ("clin", "📝"), ("inter", "🔀"), ("lab", "🔬"), ("img", "📷"), ("cir", "🏥"), ("farm_disp", "💊")]
+        orden = [("adm", ""), ("triage", ""), ("clin", ""), ("inter", ""), ("lab", ""), ("img", ""), ("cir", ""), ("farm_disp", "")]
         ev = []
         for col, ic in orden:
             for r in Repo.listar(col):
@@ -1200,7 +1200,7 @@ def pagina_expediente():
                 detalle(col, r)
         if ev and rol() in EXPORTA:
             df = pd.DataFrame([dict(Fecha=t_.replace("T", " "), Registro=COL[c_]["t"], Folio=r_["folio"], Responsable=r_["por"], Validación=r_["val"]) for t_, c_, _, r_ in sorted(ev, key=lambda e: (e[0], e[3]["folio"]), reverse=True)])
-            st.download_button("⬇️ Exportar línea de tiempo (Excel)", excel_bytes({"Expediente": df}), file_name=f"expediente_{fol}.xlsx")
+            st.download_button(" Exportar línea de tiempo (Excel)", excel_bytes({"Expediente": df}), file_name=f"expediente_{fol}.xlsx")
     with t[1]:
         if puede_esc("clin"):
             st.caption("Los diagnósticos definitivos, recetas y altas médicas solo pueden ser capturados por personal facultado para autorizarlos.")
@@ -1240,12 +1240,12 @@ def pagina_farmacia():
         dias = (cad - hoy).days if cad else None
         rows.append({"Lote": m["folio"], "Principio activo": m["d"]["principio"], "Concentración": m["d"].get("concentracion"), "Presentación": m["d"].get("presentacion"),
                      "Lote fabricante": m["d"]["lote"], "Caducidad": m["d"].get("caducidad"), "Existencia": stock_lote(m["folio"]),
-                     "Alerta": "⛔ Caducado" if dias is not None and dias < 0 else ("⚠️ Caduca en ≤ 60 días" if dias is not None and dias <= 60 else "")})
+                     "Alerta": "Caducado" if dias is not None and dias < 0 else (" Caduca en ≤ 60 días" if dias is not None and dias <= 60 else "")})
     c = st.columns(3)
     with c[0]: kpi(len(meds), "Lotes registrados")
     with c[1]: kpi(sum(1 for r in rows if r["Alerta"]), "Alertas de caducidad", "red")
     with c[2]: kpi(len([r for r in Repo.listar("clin") if FLT_RECETA(r)]) - len({d["d"]["receta"] for d in Repo.listar("farm_disp")}), "Recetas sin dispensación", "gold")
-    t = st.tabs(["📦 Existencias", "Lotes y medicamentos", "↔️ Movimientos", "💊 Dispensaciones", "🚚 Proveedores"])
+    t = st.tabs(["Existencias", "Lotes y medicamentos", "Movimientos", " Dispensaciones", "Proveedores"])
     with t[0]:
         if rows: tabla(pd.DataFrame(rows))
         else: vacio("Sin medicamentos registrados.")
@@ -1257,7 +1257,7 @@ def pagina_farmacia():
 
 def pagina_academico():
     titulo("academico", "Participación académica supervisada. El expediente académico es independiente del expediente clínico.")
-    t = st.tabs(["🎓 Participación", "📑 Reportes anonimizados"])
+    t = st.tabs(["🎓 Participación", "Reportes anonimizados"])
     with t[0]: pagina_col("acad")
     with t[1]:
         recs = [r for r in visibles("acad")]
@@ -1278,7 +1278,7 @@ def pagina_academico():
         b.bar_chart(df.groupby("Área")["Casos"].sum(), color=AZUL)
         tabla(df)
         if rol() in EXPORTA | {R_PROF}:
-            st.download_button("⬇️ Exportar (Excel)", excel_bytes({"Actividad académica": df}), file_name="reporte_academico_anonimo.xlsx")
+            st.download_button(" Exportar (Excel)", excel_bytes({"Actividad académica": df}), file_name="reporte_academico_anonimo.xlsx")
 
 
 def _cuenta(prop_folio):
@@ -1291,7 +1291,7 @@ def _cuenta(prop_folio):
 
 def pagina_finanzas():
     titulo("finanzas", "Cuentas de propietarios, cargos, abonos y comprobantes internos. Los precios los define el hospital.")
-    t = st.tabs(["💼 Cuentas", "Cargos", "Abonos", "🏷️ Tarifario"])
+    t = st.tabs(["💼 Cuentas", "Cargos", "Abonos", " Tarifario"])
     with t[0]:
         props = Repo.listar("prop")
         if not props:
@@ -1314,9 +1314,9 @@ def pagina_finanzas():
                 lineas += ["", f"Total cargos: ${tc:,.2f}", f"Total abonos: ${ta:,.2f}", f"SALDO: ${tc - ta:,.2f}", "", "COMPROBANTE INTERNO · No es un comprobante fiscal."]
                 pdf = pdf_texto("Comprobante interno de cuenta", lineas)
                 if pdf:
-                    st.download_button("🧾 Descargar comprobante interno (PDF)", pdf, file_name=f"comprobante_{fol}.pdf")
+                    st.download_button("Descargar comprobante interno (PDF)", pdf, file_name=f"comprobante_{fol}.pdf")
                 else:
-                    st.download_button("🧾 Descargar comprobante interno (TXT)", "\n".join(lineas), file_name=f"comprobante_{fol}.txt")
+                    st.download_button("Descargar comprobante interno (TXT)", "\n".join(lineas), file_name=f"comprobante_{fol}.txt")
             else:
                 st.caption("Sin movimientos en la cuenta.")
     with t[1]: pagina_col("cargo")
@@ -1436,10 +1436,10 @@ def pagina_estadisticas():
     if rol() in EXPORTA:
         df_res = pd.DataFrame(resumen, columns=["Indicador", "Valor"]).astype({"Valor": str})
         e = st.columns(2)
-        e[0].download_button("⬇️ Exportar a Excel", excel_bytes({"Resumen": df_res, "Especies": t1, "Consultas por área": t2, "Consultas por médico": t3, "Servicios": t4, "Detalle": ev.drop(columns=["paciente"])}), file_name="estadisticas_hospital.xlsx", **STRETCH)
+        e[0].download_button(" Exportar a Excel", excel_bytes({"Resumen": df_res, "Especies": t1, "Consultas por área": t2, "Consultas por médico": t3, "Servicios": t4, "Detalle": ev.drop(columns=["paciente"])}), file_name="estadisticas_hospital.xlsx", **STRETCH)
         pdf = pdf_texto("Estadísticas de actividad hospitalaria", [f"{a}: {b}" for a, b in resumen])
         if pdf:
-            e[1].download_button("⬇️ Exportar a PDF", pdf, file_name="estadisticas_hospital.pdf", **STRETCH)
+            e[1].download_button(" Exportar a PDF", pdf, file_name="estadisticas_hospital.pdf", **STRETCH)
     else:
         st.caption("La exportación está disponible para perfiles autorizados.")
 
@@ -1497,7 +1497,7 @@ def _admin_cuentas():
                 usuarios[r["Correo"]].update(nombre=(r["Nombre"] or "").strip() or usuarios[r["Correo"]]["nombre"], rol=r["Perfil"], activo=bool(r["Activa"]))
             try:
                 guardar_usuarios(usuarios)
-                ss.flash = "✅ Cuentas actualizadas."
+                ss.flash = " Cuentas actualizadas."
                 st.rerun()
             except OSError:
                 st.error("No se pudo escribir usuarios.json. Revise los permisos de la carpeta de la aplicación.")
@@ -1520,7 +1520,7 @@ def _admin_cuentas():
 def pagina_admin():
     titulo("admin", "Configuración institucional, personal, catálogos y bitácora")
     ss = st.session_state
-    t = st.tabs(["🏛️ Áreas", "👥 Personal", "🗂️ Catálogos", "🎨 Identidad visual", "📜 Bitácora", "🧪 Demostración", "🔐 Cuentas"])
+    t = st.tabs([" Áreas", " Personal", " Catálogos", " Identidad visual", " Bitácora", " Demostración", " Cuentas"])
     with t[0]:
         st.caption("Cada área se configura de forma independiente: personal, horario y disponibilidad no se presuponen.")
         ed = st.data_editor(pd.DataFrame(ss.areas), num_rows="dynamic", key="ed_areas", **STRETCH,
@@ -1528,7 +1528,7 @@ def pagina_admin():
         if st.button("Guardar áreas", type="primary"):
             ss.areas = [dict(Área=r["Área"], Activa=bool(r["Activa"]), Responsable=r["Responsable"] or "", Horario=r["Horario"] or "", Personal=r["Personal"] or "", Notas=r["Notas"] or "")
                         for r in ed.to_dict("records") if r.get("Área")]
-            ss.flash = "✅ Áreas actualizadas."
+            ss.flash = " Áreas actualizadas."
             st.rerun()
     with t[1]:
         pagina_col("staff")
@@ -1538,7 +1538,7 @@ def pagina_admin():
         ed = st.data_editor(pd.DataFrame({"Valor": ss.cat[k]}), num_rows="dynamic", key=f"cat_{k}", **STRETCH)
         if st.button("Guardar catálogo", type="primary"):
             ss.cat[k] = [str(x).strip() for x in ed["Valor"].tolist() if x and str(x).strip()]
-            ss.flash = f"✅ Catálogo «{CAT_ETIQUETAS[k]}» actualizado."
+            ss.flash = f"Catálogo «{CAT_ETIQUETAS[k]}» actualizado."
             st.rerun()
     with t[3]:
         st.caption("El sistema usa el archivo assets/escudo_unam.png (o .svg) si existe; si no, muestra un emblema ilustrativo. Aquí puede cargar otro recurso autorizado solo para esta sesión.")
@@ -1553,7 +1553,7 @@ def pagina_admin():
         if ss.audit:
             df = pd.DataFrame(ss.audit).rename(columns=dict(ts="Fecha y hora", por="Usuario", rol="Rol", accion="Acción", detalle="Detalle", folio="Folio"))
             tabla(df.iloc[::-1])
-            st.download_button("⬇️ Exportar bitácora (Excel)", excel_bytes({"Bitácora": df}), file_name="bitacora.xlsx")
+            st.download_button("Exportar bitácora (Excel)", excel_bytes({"Bitácora": df}), file_name="bitacora.xlsx")
         else:
             vacio("La bitácora aún no tiene eventos.")
     with t[6]:
@@ -1562,7 +1562,7 @@ def pagina_admin():
         st.warning("Carga registros 100 % ficticios (Paciente Demo, Propietario Demo, etc.) únicamente para revisar el diseño. No usar con datos reales.")
         if st.button("Cargar datos ficticios de demostración"):
             cargar_demo()
-            ss.flash = "✅ Datos ficticios cargados."
+            ss.flash = "Datos ficticios cargados."
             st.rerun()
         if st.button("Borrar todos los datos de esta sesión"):
             for k in ("db", "audit", "ver"):
@@ -1828,7 +1828,7 @@ def sidebar():
                 ss.mod = m
                 st.rerun()
         st.markdown("---")
-        if st.button("🚪  Cerrar sesión", key="logout", **STRETCH):
+        if st.button("Cerrar sesión", key="logout", **STRETCH):
             cerrar_sesion()
         st.caption("Prototipo de interfaz. No constituye un sistema oficialmente aprobado, certificado o implementado por la UNAM.")
 
@@ -1845,7 +1845,7 @@ def main():
     if ss.bienvenida:
         ss.bienvenida = False
         try:
-            st.toast(f"¡Bienvenido(a), {yo().split()[0]}! 🐎")
+            st.toast(f"¡Bienvenido(a), {yo().split()[0]}! ")
         except Exception:
             pass
     if ss.flash:

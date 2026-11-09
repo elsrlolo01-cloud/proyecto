@@ -400,11 +400,11 @@ for _r in (R_MVZ, R_ESP, R_EST, R_PROF, R_JEFE):
     ROLES[_r]["ver"].append("herramientas")
 
 MODULOS = {
-    "inicio": ("", "Panel principal"), "recepcion": ("", "Recepción y admisión"), "triage": ("", "Triage veterinario"),
-    "pacientes": ("", "Propietarios y pacientes"), "expediente": ("", "Expediente clínico"), "interconsultas": ("", "Interconsultas"),
-    "laboratorio": ("", "Laboratorio clínico"), "imagen": ("", "Imagenología"), "cirugia": ("", "Cirugías y anestesia"),
-    "farmacia": ("", "Farmacia hospitalaria"), "academico": ("", "Control académico"), "finanzas": ("", "Administración financiera"),
-    "estadisticas": ("", "Estadísticas"), "herramientas": ("", "Herramientas clínicas"), "admin": ("", "Administración del sistema"),
+    "inicio": "Panel principal", "recepcion": "Recepción y admisión", "triage": "Triage veterinario",
+    "pacientes": "Propietarios y pacientes", "expediente": "Expediente clínico", "interconsultas": "Interconsultas",
+    "laboratorio": "Laboratorio clínico", "imagen": "Imagenología", "cirugia": "Cirugías y anestesia",
+    "farmacia": "Farmacia hospitalaria", "academico": "Control académico", "finanzas": "Administración financiera",
+    "estadisticas": "Estadísticas", "herramientas": "Herramientas clínicas", "admin": "Administración del sistema",
 }
 
 
@@ -860,8 +860,8 @@ def hero():
 
 
 def titulo(mod, sub=""):
-    ic, nombre = MODULOS[mod]
-    st.markdown(f'<div class="pt"><h2>{ic} {h(nombre)}</h2><p>{h(sub)}</p><div class="bar"></div></div>', unsafe_allow_html=True)
+    nombre = MODULOS[mod]
+    st.markdown(f'<div class="pt"><h2>{h(nombre)}</h2><p>{h(sub)}</p><div class="bar"></div></div>', unsafe_allow_html=True)
 
 
 def vacio(msg):
@@ -1120,9 +1120,9 @@ def pagina_inicio():
     with contenedor("accesos"):
         cols = st.columns(4)
         for i, m in enumerate(mods):
-            ic, nom = MODULOS[m]
+            nom = MODULOS[m]
             with cols[i % 4]:
-                if st.button(f"{ic}  {nom}", key=f"go_{m}", **STRETCH):
+                if st.button(nom, key=f"go_{m}", **STRETCH):
                     st.session_state.mod = m
                     st.rerun()
 
@@ -1822,8 +1822,8 @@ def sidebar():
                 st.caption("Solo cambia lo que usted ve para revisar el diseño; su cuenta sigue siendo de administrador.")
         st.markdown("---")
         for m in ROLES[ss.rol]["ver"]:
-            ic, nom = MODULOS[m]
-            if st.button(f"{ic}  {nom}", key=f"nav_{m}", type="primary" if ss.mod == m else "secondary", **STRETCH):
+            nom = MODULOS[m]
+            if st.button(nom, key=f"nav_{m}", type="primary" if ss.mod == m else "secondary", **STRETCH):
                 ss.mod = m
                 st.rerun()
         st.markdown("---")

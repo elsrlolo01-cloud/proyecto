@@ -1,0 +1,28 @@
+﻿# Credenciales y configuración privada
+.streamlit/secrets.toml
+.env
+.env.*
+*.env
+usuarios.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Respaldos y versiones anteriores
+app_pre_db.py
+app_antes_integracion.ps1.py
+app_respaldo_*.py
+respaldo_app.py
+apphde.py
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Respaldos de bases de datos
+*.dump
+*.backup
+*.bak
